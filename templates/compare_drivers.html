@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compare Drivers - Formula1</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <header>
+        <h1>Compare Drivers</h1>
+        <nav>
+            <a href="/">Home</a>
+            <a href="/add_driver">Add Driver</a>
+            <a href="/query_drivers">View Drivers</a>
+            <a href="/logout">Logout</a>
+        </nav>
+    </header>
+    <main>
+        <form id="compareForm">
+            <div>
+                <label for="driver1">Driver 1:</label>
+                <select id="driver1" name="driver1">
+                    {% for driver in drivers %}
+                        <option value="{{ driver.name }}">{{ driver.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div>
+                <label for="driver2">Driver 2:</label>
+                <select id="driver2" name="driver2">
+                    {% for driver in drivers %}
+                        <option value="{{ driver.name }}">{{ driver.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button type="submit">Compare</button>
+        </form>
+        <div id="comparisonResult"></div>
+    </main>
+    <script>
+        document.getElementById('compareForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const driver1Name = document.getElementById('driver1').value;
+            const driver2Name = document.getElementById('driver2').value;
+            const drivers = {{ drivers | tojson }};
+            const driver1 = drivers.find(d => d.name === driver1Name);
+            const driver2 = drivers.find(d => d.name === driver2Name);
+            
+            const result = `
+                <table>
+                    <tr><th>Attribute</th><th>${driver1.name}</th><th>${driver2.name}</th></tr>
+                    <tr><td>Age</td><td>${driver1.age}</td><td>${driver2.age}</td></tr>
+                    <tr><td>Team</td><td>${driver1.team}</td><td>${driver2.team}</td></tr>
+                    <tr><td>Pole Positions</td><td>${driver1.pole_positions}</td><td>${driver2.pole_positions}</td></tr>
+                    <tr><td>Race Wins</td><td>${driver1.race_wins}</td><td>${driver2.race_wins}</td></tr>
+                    <tr><td>Points</td><td>${driver1.points_scored}</td><td>${driver2.points_scored}</td></tr>
+                    <tr><td>Titles</td><td>${driver1.world_titles}</td><td>${driver2.world_titles}</td></tr>
+                    <tr><td>Fastest Laps</td><td>${driver1.fastest_laps}</td><td>${driver2.fastest_laps}</td></tr>
+                </table>
+            `;
+            document.getElementById('comparisonResult').innerHTML = result;
+        });
+    </script>
+</body>
+</html>

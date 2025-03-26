@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Drivers - Formula1</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <header>
+        <h1>Driver List</h1>
+        <nav>
+            <a href="/">Home</a>
+            {% if user %}
+                <a href="/add_driver">Add Driver</a>
+            {% endif %}
+            <a href="/compare_drivers">Compare Drivers</a>
+            {% if user %}
+                <a href="/logout">Logout</a>
+            {% endif %}
+        </nav>
+    </header>
+    <main>
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Age</th>
+                    <th>Team</th>
+                    <th>Pole Positions</th>
+                    <th>Race Wins</th>
+                    <th>Points</th>
+                    <th>Titles</th>
+                    <th>Fastest Laps</th>
+                    {% if user %}
+                        <th>Actions</th>
+                    {% endif %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for driver in drivers %}
+                    <tr>
+                        <td>{{ driver.name }}</td>
+                        <td>{{ driver.age }}</td>
+                        <td>{{ driver.team }}</td>
+                        <td>{{ driver.pole_positions }}</td>
+                        <td>{{ driver.race_wins }}</td>
+                        <td>{{ driver.points_scored }}</td>
+                        <td>{{ driver.world_titles }}</td>
+                        <td>{{ driver.fastest_laps }}</td>
+                        {% if user %}
+                            <td>
+                                <a href="/edit_driver/{{ driver.name }}" class="button">Edit</a>
+                                <form class="delete-form" action="/delete_driver/{{ driver.name }}" method="POST" style="display:inline;">
+                                    <button type="submit" class="button delete-btn" onclick="return confirm('Are you sure you want to delete {{ driver.name }}?');">Delete</button>
+                                </form>
+                            </td>
+                        {% endif %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </main>
+    <script>
+        {% if user %}
+            document.querySelectorAll('.delete-form').forEach(form => {
+                form.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    if (confirm('Are you sure you want to delete this driver?')) {
+                        const response = await fetch(form.action, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' }
+                        });
+                        const result = await response.json();
+                        if (response.ok) {
+                            window.location.reload();
+                        } else {
+                            alert(result.detail);
+                        }
+                    }
+                });
+            });
+        {% endif %}
+    </script>
+</body>
+</html>

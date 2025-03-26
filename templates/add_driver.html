@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Driver - Formula1</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <header>
+        <h1>Add New Driver</h1>
+        <nav>
+            <a href="/">Home</a>
+            <a href="/query_drivers">View Drivers</a>
+            <a href="/logout">Logout ({{ user }})</a>
+        </nav>
+    </header>
+    <main>
+        <form id="addDriverForm" method="POST" action="/add_driver">
+            <div>
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+            <div>
+                <label for="age">Age:</label>
+                <input type="number" id="age" name="age" required>
+            </div>
+            <div>
+                <label for="team">Team:</label>
+                <input type="text" id="team" name="team" required>
+            </div>
+            <div>
+                <label for="pole_positions">Pole Positions:</label>
+                <input type="number" id="pole_positions" name="pole_positions" required>
+            </div>
+            <div>
+                <label for="race_wins">Race Wins:</label>
+                <input type="number" id="race_wins" name="race_wins" required>
+            </div>
+            <div>
+                <label for="points_scored">Points Scored:</label>
+                <input type="number" id="points_scored" name="points_scored" required>
+            </div>
+            <div>
+                <label for="world_titles">World Titles:</label>
+                <input type="number" id="world_titles" name="world_titles" required>
+            </div>
+            <div>
+                <label for="fastest_laps">Fastest Laps:</label>
+                <input type="number" id="fastest_laps" name="fastest_laps" required>
+            </div>
+            <button type="submit">Add Driver</button>
+        </form>
+        <p id="message"></p>
+    </main>
+    <script>
+        document.getElementById('addDriverForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const response = await fetch('/add_driver', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(Object.fromEntries(formData))
+            });
+            const result = await response.json();
+            document.getElementById('message').textContent = result.message;
+            if (response.ok) {
+                e.target.reset();
+            }
+        });
+    </script>
+</body>
+</html>
